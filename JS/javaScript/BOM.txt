@@ -1,0 +1,59 @@
+BOM:
+    Browser Object Model 浏览器对象模型
+    大部分的方法都是 在window对象下面 window.xx
+
+    open(页面的地址url,打开的方式)    打开一个新的窗口
+         url为空,就打开一个空白页面
+         打开方式为空,默认新窗口方式打开 (可以参考 a 标签的打开方式)
+         其它参数,窗口的宽高什么的,有兼容性问题,一般不用.
+         (此方法也可以写成:window.open() js规定 很多时候 window 可以省略不写  )
+
+        返回值:返回新打开窗口的window对象  可以通过此修改新打开窗口的行为样式
+
+    close()  关闭窗口   不同浏览器有不同的表现形式:
+             火狐,默认无法关闭;chrome:默认直接关闭;ie:询问用户
+
+    window.navigator.userAgent    :浏览器信息
+
+    window.location   :浏览器地址信息    是一个对象
+
+    window.location.href    :  url为空
+
+    window.location.search  :url?后面的内容 --指这个,包括?-->(?后面的内容)
+
+    window.location.hash    :url#后面的内容  --指这个,包括#-->(#后面的内容)  
+
+可视区的尺寸
+    document.documentElement.clientWidth
+    document.documentElement.clientHeight
+
+滚动条的距离
+    document.documentElement.scrollTop[scrollLeft]
+    document.body.scrollTop[scrollLeft]                    //用来处理chrome 
+
+    一般这样处理兼容:
+    var scrollTop=document.documentElement.scrollTop||document.body.scrollTop;
+内容高
+    document.body.scrollHeight
+
+文档高度
+    document.documentElement.offsetHeight     //这个有兼容性问题
+    document.body.offsetHeight          //推荐用这个
+
+
+onscroll :当滚动条滚动的时候触发      
+onresize :当窗口大小发生改变的时候触发      
+            这两个事件是  以时间间隔进行计算,而不是滚动多少距离计算
+
+
+
+
+
+
+
+
+
+
+
+
+            
