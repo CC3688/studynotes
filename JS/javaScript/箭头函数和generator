@@ -1,0 +1,76 @@
+箭头函数
+    ES6标准新增了一种新的函数：Arrow Function（箭头函数）
+    x => x * x ;
+    相当于:
+    function (x) {
+    return x * x;
+    }
+
+    箭头函数相当于匿名函数，并且简化了函数定义。箭头函数有两种格式，一种像上面的，只包含一个表达式，
+    连{ ... }和return都省略掉了。
+    还有一种可以包含多条语句，这时候就不能省略{ ... }和return
+    如果参数不是一个，就需要用括号()括起来
+    (x,y)=>{
+        if(x>0){
+            return x-y;
+        }else{
+            return y-x;
+        }
+    }
+    如果要返回一个对象，就要注意，如果是单表达式，这么写的话会报错:
+    x => { foo: x }    //这样就报错了
+    应该这样写:x => ({ foo: x });  //这就行
+
+    箭头函数和匿名函数有个明显的区别：箭头函数内部的this是词法作用域，由上下文确定
+    (就是说以前一般在对象里的方法需要用var _this=this 来纠正 方法函数里的this指向
+     用箭头函数则不用了)
+
+     由于this在箭头函数中已经按照词法作用域绑定了，所以，用call()或者apply()调用箭头
+     函数时，无法对this进行绑定，即传入的第一个参数被忽略.
+
+generator
+    generator（生成器）是ES6标准引入的新的数据类型.一个generator看上去像一个函数,但可以返回多次.
+
+    一个函数是一段完整的代码，调用一个函数就是传入参数，然后返回结果,函数在执行过程中，如果没有遇到
+    return语句（函数末尾如果没有return，就是隐含的return undefined;），控制权无法交回被调用的代码
+
+    generator跟函数很像，定义如下:
+    function* foo(x) {
+        yield x + 1;
+        yield x + 2;
+        return x + 3;
+    }
+
+    generator和函数不同的是，generator由function*定义（注意多出的*号），并且，除了return语句，
+    还可以用yield返回多次
+
+    直接调用一个generator和调用函数不一样，仅仅是创建了一个generator对象，还没有去执行它
+
+    调用generator对象有两个方法:
+            一是不断地调用generator对象的next()方法
+                如上: var f=foo(5);
+                         f.next();   // { value: 6, done: false }
+                         f.next();   // { value: 7, done: false }
+                         f.next();   // { value: 8, done: true }
+
+                        while(true){
+                            var rr=f.next();
+                            console.log(rr);
+                            if(rr.done){
+                                return;
+                            }
+                        }
+                next()方法会执行generator的代码，然后，每次遇到yield x;就返回一个对象
+                {value: x, done: true/false}，然后“暂停”。返回的value就是yield的返回值
+                done表示这个generator是否已经执行结束了。如果done为true，则value就是
+                return的返回值
+
+            第二个方法是直接用for ... of循环迭代generator对象，这种方式不需要我们自己判断done
+                for(var x of f){
+                    console.log(x);   // 6, 7
+                }  
+
+                注意:for...of循环，依次显示 2 个yield表达式的值。这里需要注意，一旦next方法的返回对象的done属性为true，for...of循环就会中止，且不包含该返回对象,所以上面才只有6,7
+    generator主要利用它,其中的yield命令,它表示执行到此处，执行权将交给其他协程,也就是说，
+             yield命令是异步两个阶段的分界线,协程遇到yield命令就暂停，等到执行权返回，再从暂停的地方
+             继续往后执行。它的最大优点，就是使异步编程代码的写法非常像同步操作      
