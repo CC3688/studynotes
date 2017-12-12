@@ -1,0 +1,140 @@
+Event事件
+    焦点:使浏览器能够区分用户输入的对象,当一个元素有焦点的时候,那么他就可以接收用户的输入.
+    给元素设置焦点的方式:
+    1.点击
+    2.tab键
+    3.js
+    不是所有的元素都能够接收焦点,只有能够响应用户操作的元素才有焦点
+
+    onfocus:当元素获取到焦点的时候触发
+
+    onblur:当元素失去焦点的时候触发
+
+    obj.focus()    给指定的元素(obj)设置焦点
+    obj.blur()     取消指定的元素(obj)的焦点
+    obj.select()   选择指定的元素(obj)里面的文本内容
+
+    Event对象 (事件的核心)
+        event:事件对象     
+              当一个事件发生的时候,和当前这个对象发生的这个事件有关的一此详细的信息都会
+              临时保存到一个指定的地方-->event对象   供我们在需要的时候调用
+              事件对象必须在一个事件调用的函数里面使用才有内容
+              事件函数:事件调用的函数.一个函数是不是事件函数,不在定义的时候准定,而是取决
+              于这个函数调用的时候
+
+            兼容处理:
+            ie/chrome:       event对象是一个内置的全局对象
+            标准浏览器:        事件对象是通过事件函数的第一个参数传入的
+            如果一个函数是被事件调用的,那么这个函数定义的第一个参数就是事件对象
+            function fn(ev){
+                var ev=ev||event;
+            }
+
+            clientX[Y]:当一个事件发生的时候,鼠标到页面可视区的距离 
+                       x是到左边的距离 Y是到顶部的距离
+            
+            onmousemove:当鼠标在一个元素上面移动时触发
+                        触发频率不是像素,而是间隔时间,在一个指定的时间内(很短),如果鼠标的
+                        位置和上一次的位置发生了变化,那么就触发一次.
+
+    事件冒泡:当一个元素接收到事件的时候,会把他接收到的所有传播给他的父级,一直到顶层window
+            这就是事件冒泡.
+            (给**加事件,其实应该说成:给**加事件处理函数)
+            XX.onclick=fn;   //告诉 XX,如果它接收到了一个点击事件,那么他就去执行fn
+                            //这种形式, 就是 事件函数绑定
+                            //没有绑定函数,XX还是可以接收事件的.只是接收后,没有任何表现
+
+            阻止冒泡:在当前要阻止冒泡的事件函数中调用 event.cancleBubble=true;
+            有多个事件函数要阻止各种事件的冒泡,需要分别去阻止.
+
+    绑定事件: 事件绑定的第二种方法
+         第一种:    给一个对象绑定一个事件处理函数的第一种形式
+                  obj.onclick=fn   //obj.事件=函数
+                  此种 赋值的形式,没法绑定多个函数,后面的会覆盖掉前面的.
+         第二种:给一个对象的同一事件绑定多个不同的函数
+              ie:     obj.attachEvent(事件名称,事件函数);  
+                       1没有捕获
+                       2事件名称有on
+                       3事件函数执行的顺序:标准ie-->正序   非标准ie-->倒序 
+                       4this指向window
+             标准:    obj.addEventListener(事件名称,事件函数,是否捕获);
+                       1有捕获
+                       2事件名称没有on
+                       3事件执行的顺序:正序
+                       4this指向触发该事件的对象
+             (非标准ie,只有attachEvent,标准ie,两个都有)
+             是否捕获:默认是false       false:冒泡    true:捕获
+
+         call:函数下的一个方法  调用函数   fn()==fn.call()   //大部分情况下成立
+              call方法第一个参数可以改变函数执行过程中的内部this的指向
+              第二个参数起,是原函数的参数列表
+              如果第一个参数是null 则指向原本应该指向的对象(不改变指向)(attachEvent,则指向window)
+
+        function bind(obj, evname, fn){
+            if(obj.addEventListener){
+                obj.addEventListener(evname, fn, false);
+            }else{
+                obj.attachEvent('on'+evname,function(){
+                    fn.call(obj);
+                });
+            }
+        }
+    事件取消:事件函数的取消
+        第一种事件绑定形式的取消:
+            obj.事件=函数;
+            obj.事件=null;  //取消了...
+        第二种事件绑定的取消:
+            ie:   obj.dettachEvent(事件名称,事件函数);
+            标准:  obj.removeEventListener(事件名称, 事件函数, 是否捕获)
+    
+    onKeydown:当键盘按键按下来的时候触发   如果按下不抬起(会有一小段时间停顿),然后会连续触发
+    onKeyup:  当键盘按键抬起来的时候触发
+              不是所有的元素都能够接收键盘事件,能够响应用户输入的元素,能够接收焦点的元素
+              就能够接收键盘事件
+              有时,如 div 不能接收键盘事件, 可以用document(文档元素来接收)
+
+
+    event.keyCode:数字类型 键盘按键的值 键值 
+
+                  ctrlKey, shiftKey, altKey 布尔值
+                  当一个事件发生的时候,如果ctrl || shift  || alt 是按下的状态,
+                  返回true, 否则返回false
+
+    事件默认行为:
+        当一个事件发生的时候 浏览器 自己会默认做的事情
+
+        阻止默认行为:
+            当前这个行为是什么事件触发的,然后在这个事件的处理函数中使用return false;
+            return false 阻止的是 obj.on事件名称=fn  所触发的默认行为
+            addEventListener 绑定的事件需要通过event下面的preventDefault();
+            阻止默认行为,需要根据事件的绑定形式来确定用什么方式来阻止
+
+    oncontextmenu:右键菜单事件,当右键菜单(环境菜单)显示出来的时候触发
+
+    鼠标滚轮事件:
+        ie/chrome : onmousewheel
+                    event.wheelDelta 数值类型的值,代表滚动的方向
+                        上:  120
+                        下: -120
+
+          firefox : DOMMouseScroll 必须用addEventListener
+                    event.detail
+                        上: -3
+                        下: 3
+        兼容性处理:(上下判断)
+            var b=true;
+            if(ev.wheelDelta){
+                b=ev.wheelDelta>0?true:false;
+            }else{
+                b=ev.detail<0?true:false;
+            }
+            //这样,通过判断 b 的值就知道 是向上还是向下   真为向上,假为向下
+
+            如果 在元素上滚动的 同时, 页面也有滚动会触发页面的滚动(默认行为) 
+            需要在函数里加 :
+            if(ev.preventDefault){
+                ev.preventDefault();
+            }
+            return false;
+            //因为滚动事件需要两种绑定形式来处理兼容性,阻止默认行为也需要有两种
+
