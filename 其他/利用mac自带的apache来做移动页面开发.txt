@@ -1,0 +1,48 @@
+利用mac自带的apapche来做移动页面的开发
+    做移动页面需要真机测试，可以通过apache来访问电脑的文件，从而在手机上查看效果和测试
+    mac系统自带 apache
+
+    常用命令：
+    sudo apachectl start        启动apache
+    sudo apachectl restart      重新启动apache 
+
+    首先修改httpd.conf配置文件 
+        在终端中输入
+        sudo vim /etc/apache2/httpd.conf
+        在文件最下面找到这句：
+        # Virtual hosts
+        Include /private/etc/apache2/extra/httpd-vhosts.conf
+        确保Include前面没有# 否则去掉# 保存并且推出
+
+    然后终端中输入
+        sudo vim /etc/apache2/extra/httpd-vhosts.conf
+
+        <VirtualHost *:80>
+            ServerName    localhost
+            DocumentRoot '你想要的路径'  
+            <Directory "你想要的路径">
+                AllowOverride none
+                Require all denied
+                Options Indexes FollowSymLinks
+                AllowOverride None
+                Require all granted
+            </Directory>
+        </VirtualHost>
+    保存退出，重启apache 现在访问http://localhost就是你自己的路径了，注意此时
+    只能mac自己访问，局域网内的手机还是无法访问到的。
+
+    然后，把上面设置的 '你想要的路径' 的文件夹 的权限改为777
+        方法：sudo chmod -R 777 目录名
+    
+    接着回到httpd.conf文件 （参照上面）
+         在<Directory>中添加 Allow from All (All为所有ip)
+         在<Directory>中添加Options Indexes (表示允许目录访问)
+         在配置文件中添加 Require all granted来赋权限。
+        
+    注意： 需要注意的是，如果是自己是通过http-vhost.conf文件来实现多个虚拟域名的话。一定要把servername  是localhost的放在第一位。
+
+    现在，您就可以把要测试的手机端网页文件，放到你刚刚设置的文件，然后手机浏览器访问
+    mac的局域网地址就可以了
+        可以在终端 ifconfig  查看mac 本机 在局域的 地址
+
+

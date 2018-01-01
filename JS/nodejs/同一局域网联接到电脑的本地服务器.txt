@@ -1,0 +1,15 @@
+mac里的虚拟机访问本地服务器
+    webpack-dev-server
+        需要在配置文件里设置host为0.0.0.0
+        devServer:{
+        open:true,
+        contentBase:'./src/common',
+        publicPath:'/',
+        host:'0.0.0.0'
+        }
+    然后，mac下 获取 主机的ip本地ip地址（在终端里用ifconfig命令查看）
+    在虚拟里用
+        mac主机的ip:端口  来访问就可以了  如：192.168.1.1：3000
+    同一局域网下的手机，也可以用同样的方式访问
+
+    apache 则不用怎样设置 直接按上面的方法访问就可以了
