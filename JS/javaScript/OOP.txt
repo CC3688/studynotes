@@ -1,0 +1,145 @@
+ OOP 
+    JavaScript的面向对象编程和大多数其他语言如Java、C#的面向对象编程都不太一样.
+    JavaScript不区分类和实例的概念，而是通过原型（prototype）来实现面向对象编程
+
+    JavaScript对每个创建的对象都会设置一个原型，指向它的原型对象.当我们用obj.xxx访问一个对象的属性时，JavaScript引擎先在当前对象上查找该属性，如果没有找到，就到其原型对象上找，如果还没有找到，就一直上溯到Object.prototype对象，最后，如果还没有找到，就只能返回undefined
+
+    var arr = [1, 2, 3]  
+    //其原型链是：arr ----> Array.prototype ----> Object.prototype ----> null
+
+    function foo() {
+    return 0;
+    }
+    //foo ----> Function.prototype ----> Object.prototype ----> null
+
+    如果原型链很长，那么访问一个对象的属性就会因为花更多的时间查找而变得更慢，
+    因此要注意不要把原型链搞得太长
+
+    工厂方式:封装函数
+        //相当于其它语言的类
+        先写构造函数:
+            function 构造函数(){
+                this.属性
+            }
+            构造函数.原型.方法=function(){}
+
+        //相当于其它语言的实例
+        使用: var obj1=new 构造函数();
+            obj1.方法();
+
+        js的继承,分为属性的继承 和 方法的 继承
+
+        属性的继承:在子类的构造函数里,用call方法调用一下父类的构造方法
+
+        方法的继承:原型链继承
+            原型链继承的写法:   //封闭的这个函数专门用于继承
+            function inherits(Child, Parent) {
+                var F = function () {};
+                F.prototype = Parent.prototype;
+                Child.prototype = new F();
+                Child.prototype.constructor = Child;
+            }
+
+            在增加子类的方法前,调用 inherits(Child, Parent) 然后再增加子类的方法
+            Child.prototype.方法名=function(){}
+
+        方法的继承:拷贝继承  for in   //封闭一个函数
+        function inherits2(Child,Parent){
+            for(var attr in Parent){
+                Child[attr]=Parent[attr];
+            }
+        }
+            在增加子类的方法前,调用 inherits2(Child, Parent) 然后再增加子类的方法
+            Child.prototype.方法名=function(){}
+
+             //一个学生类:
+             function Student(name) {
+                this.name = name ;
+            }
+
+            Student.prototype.hello = function () {
+                alert('Hello, ' + this.name + '!');
+            }
+            //一个继承学生类的  小学生类
+            function PrimaryStudent(name,grade) {
+                Student.call(this, grade);
+                this.grade = grade;
+            }
+
+            // 实现原型继承链:
+            inherits(PrimaryStudent, Student);  //inherits2(PrimaryStudent,Student);
+
+            // 绑定其他方法到PrimaryStudent原型:
+            PrimaryStudent.prototype.getGrade = function () {
+                return this.grade;
+            };
+        
+
+class:
+    关键字class从ES6开始正式被引入到JavaScript中。class的目的就是让定义类更简单
+    用新的class关键字来编写Student，可以这样写:
+
+    class Student {
+        constructor(name) {
+            this.name = name;
+        }
+
+        hello() {
+            alert('Hello, ' + this.name + '!');
+        }
+    }
+    class的定义包含了构造函数constructor和定义在原型对象上的函数hello()（注意没有function关键字）
+    使用的话,就和前面的一样.
+
+    class继承:用class定义对象的另一个巨大的好处是继承更方便了。现在，原型继承的中间对象，原型对象的构造函数等等都不需要考虑了，直接通过extends来实现,同时需要用super调用父类的构造方法
+
+    class PrimaryStudent extends Student {
+        constructor(name, grade) {
+            super(name); // 记得用super调用父类的构造方法!
+            this.grade = grade;
+        }
+
+        myGrade() {
+            alert('I am at grade ' + this.grade);
+        }
+    }
+
+    ES6引入的class和原有的JavaScript原型继承实际上它们没有任何区别，class的作用就是让JavaScript引
+    擎去实现原来需要我们自己编写的原型链代码。简而言之，用class的好处就是极大地简化了原型链代码。
+    因为不是所有的主流浏览器都支持ES6的class。如果一定要现在就用上，就需要一个工具把class代码转
+    换为传统的prototype代码，可以试试Babel这个工具。
+
+hasOwnProperty : 看是不是对象自身下面的属性       //在Object的原型上
+                 obj.hasOwnProperty('属性名')  //返回真 或 假
+
+constructor : 查看对象的构造函数    //每一个函数都会有的,都是自动生成的
+                obj.constructor      //返回 构造 函数
+                obj.constructor == Array  //真  就是 数组
+
+            constructor 在下面情况,会不经意被你修改
+            如上例的 Student
+            Student.prototype = {
+                constructor:Student,   //修正
+                name :'xxx',
+                age  : xx
+            }
+            因为这个是赋值,把{}赋给Student.prototype,这就改变了,{}会自己生成新的
+            Object.constructor.  这种写法,就需要 在{}里修正 constructor
+
+instanceof : 对象与构造函数在原型链上是否有关系
+
+toString() : 系统对象下面都是自带的, 自己写的对象都是通过原型链找object下面的
+             它的作用就是把 对象 转成 字符串
+
+             可以使用 Object.prototype.toString.call(xxx) == '[object 类型]' 
+             作类型判断   [object Array]
+                        [object Date]
+                        [object Number]
+                        [object String]
+                        [object RegExp]
+                        [object Object]
+                        [object Null]
+                        [object Boolean]
+
+
+

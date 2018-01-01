@@ -1,0 +1,45 @@
+媒体查询:
+    媒体查询可以让我们根据设备显示器的特性为其设定css样式。
+    可以将媒体查询想象成对浏览器的提问：如果浏览器回答“是”，则应用样式；如果回答是“否”，则不应用样式。
+
+语法：
+<link rel="stylesheet" media="screen and (orientation:portrait)" href="portraitscreen.css">
+首先，媒体查询表达式询问了媒体类型（你是一块显示屏吗？），然后询问了媒体特性（显示屏是纵向放置的吗？）如果两
+个都回答“是”，则加载“portraitscreen.css"样式文件。
+可以用and来将多个表达式组合在一起。 可以在媒体查询的开头追加not,颠到该查询逻辑。
+<link rel="stylesheet" media="screen and (orientation:portrait)，projection" 
+href="portraitscreen.css">
+上例是一个 媒体查询列表，媒体查询之间用逗号隔开，上有两项媒体查询。查询列表中的任意一个查询为真，就会加载指定
+的样式表。
+
+@media screen and (max-device-width:400px) {
+        body{
+            background:green;
+        }
+}
+css样式中使用媒体查询,上例表示,在屏幕宽度小于等于400px像素的设备上,body背景会变绿色。当然也可以通过
+@import url("...") screen and (max-width:360px);来引入其他样式表到当前样式表，注意这会增加http请
+求，谨慎使用。
+
+媒体查询检测的特性：
+    最常用的是设备的视口宽度width和屏幕的宽度device-width 其他的很少用到。
+    width:视口的宽度
+    height:视口的高度
+    device-width:设备屏幕的宽度
+    device-height:设备屏幕的高度
+    orientation:检查设备处于横向还是纵向
+    aspect-ratio:基于视口宽度和高度的宽高比。一个16：9比例的显示器可以这样定义aspect-ratio:16:9
+    device-aspect-ratio:和上面类似，基于设备渲染平面宽度和高度的宽高比。
+    color:每种颜色的位数。如：min-color:16会要是检测设备是否拥有16位颜色。
+    color-index:设备的颜色索引表中的颜色数。值必须是非负整数
+    monochrome:检测单色桢缓冲区中每个像素所使用的位数。值必须是非负整数。monochrome:2。
+    resolution:用来检测屏幕或打印机的分辨率，如
+    scan:电视机的扫描方式。值可以设为：progressive(逐行扫描)，interlace(隔行扫描)
+    grid:用来检测输出设备是网格还是位图设备。
+    以上所有特性中，除了scan和grid之外，都可以使用min和max前缀来创建一个查询范围。
+
+加载媒体查询的方法
+    将不同的媒体查询的样式保存到独立的文件中没有太大的好外（个人喜好或便于组织代码除外）。使用多个独立的文件
+    会增加用于页面渲染的http请求数理，从而导至页面加载变慢。
+    
+    respond.js是为IE8及以下版本增加媒体查询支持的最快的js工具，但它目前无法解析css的@import命令。因此，建议在已有的样式表中追加媒体查询。
