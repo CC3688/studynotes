@@ -1,0 +1,89 @@
+移动端基本环境:
+    模拟测试环境,可以使用Firefox 或 chrome 浏览器 的模仿各种手机来测试（其实浏览器只是简单
+    的模拟屏幕的尺寸大小和一些简单基本的特性而已）项目上线真机测试不可少。
+
+    真机测试环测试环境，可以利用Apache 开启本地服务器环境，然后在手机端（同一局域网）访问测
+    试。 手机端输入apache所在主机的局域网地址即可以访问（当然需要提前做必要的设置配置）。
+
+    视口的设置：
+    例：<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        viewport: 视口（可视区窗口）
+            默认不设置viewport一般可视区宽度在移动端是980  （体验差，一般要设置）
+            width 可视区的宽度 （ number || device-width ）一般不会直接设置一个数值
+                  一般是用第二项设置  
+            user-scalable 是否允许用户缩放 （yes||no）  (iso10无效,js解决)
+            initial-scale 初始缩放比例  初始和最小要设置一样的值
+            mininum-scale 最小缩放比例
+            maxinum-scale 最大缩放比例 
+                                                        
+            手机屏幕的分辨率，不等于网页面的宽高 有个东西叫做 像素比 devicePixelRatio
+            window.devicePixelRatio   只读属性，不能设置
+            各种手机的 像素比是不一样的  （N就是像素比）
+            像素比 把一个像素 放到至 N 个像素去显示 
+            
+            所以图片要特别注意，如果根本像素比之后的宽高值去截图，那图片放大到像素比会变模
+            糊，图片 至少要 750 以上
+        
+    常见meta设置
+        QQ的x5内核浏览器 
+        设置强制横屏或竖屏显示
+        <meta name="x5-orientation" content="portrait|landscape">
+        设置全屏显示
+        <meta name="x5-fullscreen" content="true">
+
+        UC的浏览器 
+        设置强制横屏或竖屏显示
+        <meta name="screen-orientation" content="portrait|landscape">
+        设置全屏显示
+        <meta name="fullscreen" content="yes">
+
+        其他浏览器没有可直接设置的，需其他方法来解决
+
+        禁止识别电话号码 和 邮箱地址
+        <meta name="format-detection" content="telephone=no,email=no"> 
+        这样在浏览器按了就不会 调用拨话功能 和邮箱功能
+        需要的时候可以这样子写：
+        <a href="tel:13535788888">13535788888</a><br>
+        <a href="mailto:442677028@qq.com">442677028@qq.com</a>
+        注意，这禁用方法对有的手机没效
+    
+    默认样式：
+        a链接 按钮 点击时 会有产生一个背景阴影  
+        a,
+        input,
+        button {
+            -webkit-tap-highlight-color:颜色；
+        }
+        如果不要有高亮颜色，就可以把它设为透明 rgba(0,0,0,0)
+
+        button在 ios变成圆角的  这可以通过下列方法清除默认样式
+        button {
+            -webkit-appearance:none;
+            border-radius:0;
+        }
+
+        字体，一般手机都会设置一个 英文字体 font-family:Helvetica;
+        中文不像电脑有宋体，黑体之类的，都是手机有什么就用什么字体  
+        （如果用其它字体包，体积会过大）
+
+        禁止文字缩放：
+        -webkit-text-size-adjust: 100%
+
+        禁止默认选中文字：
+         -webkit-user-select：none;  
+        可以禁止按文字后默认选中文字，有兼容性问题，一般用事件来处理
+
+        Font Boosting
+        在一段文字我们没有给它设置高度的时候，在webkit内核下，文字的大小被浏览器放大了。
+        解决的办法：
+            1, 设置高度
+            2，设置最大高度： max-height
+
+        固定定位
+            尽量不要使用固定定位。可以通过绝对定位来模拟。
+        
+        适配：
+            宽度 百分比
+            高度具体px
+
+        
